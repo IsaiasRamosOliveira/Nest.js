@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Param } from '@nestjs/common'
+import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common'
 import { UserRepository } from './user.repository';
 import { createUserDTO } from './dto/createUser.dto';
+import { updateUser } from './dto/uptadeUser.dto';
 import { UserEntity } from './user.entity';
 import {v4 as uuid} from 'uuid'
 import { ListUserDTO } from './dto/listUser.dto';
@@ -38,5 +39,21 @@ export class UserController {
         return `${id}`
     }
 
+    @Put('/:id')
+    async updateUser(@Param('id') id: string, @Body() dice: updateUser){
+        await this.userRepository.update(id, dice);
+        return {
+            message: "Usuário atualizado.",
+            dice
+        }
+    }
+
+    @Delete('/:id')
+    async deleteUser(@Param('id') id:string){
+        await this.userRepository.delete(id);
+        return {
+            message: "usuário removido com sucesso."
+        }
+    }
 
 }
