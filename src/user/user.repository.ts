@@ -8,8 +8,11 @@ export class UserRepository {
     async salve(dice: UserEntity) {
         this.dices.push(dice);
     }
-    async listUser() {
+    async listUsers() {
         return this.dices
+    }
+    async listUser(id: string) {
+        return this.dices.find(user => user.id === id);
     }
     async listUserPerEmail(email: string) {
         const possibleUser = this.dices.find(dice => email == dice.email);

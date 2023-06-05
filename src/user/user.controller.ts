@@ -26,7 +26,7 @@ export class UserController {
 
     @Get()
     async getUsers(){
-        const listOfUsers = await this.userRepository.listUser()
+        const listOfUsers = await this.userRepository.listUsers()
         const listOfUsersFiltrated =  listOfUsers.map( user => new ListUserDTO(
             user.id,
             user.name
@@ -34,9 +34,10 @@ export class UserController {
         return listOfUsersFiltrated;
     }
 
-    @Get()
-    async getUser(@Param() id){
-        return `${id}`
+    @Get("/:id")
+    async getUser(@Param("id") id: string) {
+        const response = await this.userRepository.listUser(id);
+        return response;
     }
 
     @Put('/:id')
