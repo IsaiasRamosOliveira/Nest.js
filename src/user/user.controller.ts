@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common'
+import { Body, Controller, Get, Post, Param, Put, Delete, HttpStatus, NotFoundException } from '@nestjs/common'
 import { UserRepository } from './user.repository';
 import { createUserDTO } from './dto/createUser.dto';
 import { updateUser } from './dto/uptadeUser.dto';
 import { UserEntity } from './user.entity';
 import {v4 as uuid} from 'uuid'
 import { ListUserDTO } from './dto/listUser.dto';
+import { NestResponse } from '../core/http/nestResponse';
+import { NestResponseBuilder } from '../core/http/NestResponseBuilder';
+
 
 @Controller("/users")
 export class UserController {
@@ -13,15 +16,21 @@ export class UserController {
     ){}
 
     @Post()
-    async postUser(@Body() dice: createUserDTO) {
+    async postUser(@Body() dice: createUserDTO): Promise<NestResponse> {
         const userEntity = new UserEntity();
-        userEntity.email = dice.email
-        userEntity.name = dice.name
-        userEntity.password = dice.password
         userEntity.id = uuid();
-
+        userEntity.name = dice.name;
+        userEntity.email = dice.email;
+        userEntity.password = dice.password;
         this.userRepository.salve(userEntity);
-        return { message: "Usuário criado!", dice }
+        
+        return new NestResponseBuilder()
+            .status(HttpStatus.CREATED)
+            .headers({
+                'Location': `/users/${userEntity.name}`
+            })
+            .body(userEntity)
+            .build();
     }
 
     @Get()
@@ -31,6 +40,12 @@ export class UserController {
             user.id,
             user.name
         ));
+        if(listOfUsersFiltrated.length === 0){
+            throw new NotFoundException({
+                statusCode: HttpStatus.NOT_FOUND,
+                message: 'Usuário não encontrado.'
+            })
+        }
         return listOfUsersFiltrated;
     }
 
