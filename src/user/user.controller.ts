@@ -27,7 +27,7 @@ export class UserController {
     @Get()
     async getUsers(){
         const listOfUsers = await this.userRepository.listUsers()
-        const listOfUsersFiltrated =  listOfUsers.map( user => new ListUserDTO(
+        const listOfUsersFiltrated = listOfUsers.map( user => new ListUserDTO(
             user.id,
             user.name
         ));

@@ -2,7 +2,6 @@ import { IsString, IsEmail, MinLength, IsNotEmpty, IsOptional } from "class-vali
 
 
 export class updateUser {
-
     @IsString()
     @IsNotEmpty({message: "O campo de name não pode estar vázio."})
     @IsOptional()
