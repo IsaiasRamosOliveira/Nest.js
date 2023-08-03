@@ -7,8 +7,10 @@ import {v4 as uuid} from 'uuid'
 import { ListUserDTO } from './dto/listUser.dto';
 import { NestResponse } from '../core/http/nestResponse';
 import { NestResponseBuilder } from '../core/http/NestResponseBuilder';
+import { ApiTags } from '@nestjs/swagger';
 
 
+@ApiTags("users")
 @Controller("/users")
 export class UserController {
     constructor(
