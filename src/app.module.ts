@@ -6,10 +6,12 @@ import { TransformResponseInterceptor } from './core/http/TransformResponse.inte
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config';
 import { PostgresConfigService } from './config/postgres.config.service';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
     UserModule,
+    ProductModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),

@@ -2,7 +2,6 @@ import { IsString, IsEmail, MinLength, IsNotEmpty } from "class-validator"
 import { uniqueEmail } from "../validators/uniqueEmail.validador"
 
 export class createUserDTO{
-
     @IsString()
     @IsNotEmpty({message: "O campo de name não pode estar vázio."})
     name: string

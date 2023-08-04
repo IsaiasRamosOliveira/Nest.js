@@ -1,21 +1,20 @@
-import { Body, Controller, Get, Post, Param, Put, Delete, HttpStatus, NotFoundException } from '@nestjs/common'
-import { UserRepository } from './user.repository';
-import { createUserDTO } from './dto/createUser.dto';
-import { updateUser } from './dto/uptadeUser.dto';
-import { UserEntity } from './user.entity';
-import {v4 as uuid} from 'uuid'
-import { ListUserDTO } from './dto/listUser.dto';
-import { NestResponse } from '../core/http/nestResponse';
-import { NestResponseBuilder } from '../core/http/NestResponseBuilder';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { v4 as uuid } from 'uuid';
+import { NestResponseBuilder } from '../core/http/NestResponseBuilder';
+import { NestResponse } from '../core/http/nestResponse';
+import { createUserDTO } from './dtos/createUser.dto';
+import { updateUser } from './dtos/uptadeUser.dto';
+import { UserEntity } from './user.entity';
+import { UserService } from './user.service';
 
 
 @ApiTags("users")
 @Controller("/users")
 export class UserController {
     constructor(
-        private userRepository: UserRepository
-    ){}
+        private userService: UserService
+    ) { }
 
     @Post()
     async postUser(@Body() dice: createUserDTO): Promise<NestResponse> {
@@ -24,8 +23,8 @@ export class UserController {
         userEntity.name = dice.name;
         userEntity.email = dice.email;
         userEntity.password = dice.password;
-        this.userRepository.salve(userEntity);
-        
+        this.userService.save(userEntity);
+
         return new NestResponseBuilder()
             .status(HttpStatus.CREATED)
             .headers({
@@ -36,39 +35,29 @@ export class UserController {
     }
 
     @Get()
-    async getUsers(){
-        const listOfUsers = await this.userRepository.listUsers()
-        const listOfUsersFiltrated = listOfUsers.map( user => new ListUserDTO(
-            user.id,
-            user.name
-        ));
-        if(listOfUsersFiltrated.length === 0){
-            throw new NotFoundException({
-                statusCode: HttpStatus.NOT_FOUND,
-                message: 'Usuário não encontrado.'
-            })
-        }
-        return listOfUsersFiltrated;
+    async getUsers() {
+        const listOfUsers = await this.userService.listUsers();
+        return listOfUsers;
     }
 
     @Get("/:id")
     async getUser(@Param("id") id: string) {
-        const response = await this.userRepository.listUser(id);
+        const response = await this.userService.listUser(id);
         return response;
     }
 
     @Put('/:id')
-    async updateUser(@Param('id') id: string, @Body() dice: updateUser){
-        await this.userRepository.update(id, dice);
+    async updateUser(@Param('id') id: string, @Body() data: updateUser) {
+        await this.userService.update(id, data);
         return {
             message: "Usuário atualizado.",
-            dice
+            data
         }
     }
 
     @Delete('/:id')
-    async deleteUser(@Param('id') id:string){
-        await this.userRepository.delete(id);
+    async deleteUser(@Param('id') id: string) {
+        await this.userService.delete(id);
         return {
             message: "usuário removido com sucesso."
         }
