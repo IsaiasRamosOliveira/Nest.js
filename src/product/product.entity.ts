@@ -9,14 +9,13 @@ import {
 } from 'typeorm';
 import { ProductCharacterEntity } from './product-characters.entity';
 import { ProductImageEntity } from './product-image.entity';
+import { OrderedItemEntity } from '../order/entities/ordereditem.entity';
+
 
 @Entity({ name: 'products' })
 export class ProductEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-
-    @Column({ name: 'user_id', length: 100, nullable: false })
-    userId: string;
 
     @Column({ name: 'name', length: 100, nullable: false })
     name: string;
@@ -38,6 +37,9 @@ export class ProductEntity {
 
     @OneToMany(() => ProductImageEntity, productImageEntity => productImageEntity.product, { cascade: true, eager: true })
     images: ProductImageEntity[];
+
+    @OneToMany(() => OrderedItemEntity, (orderedItem) => orderedItem.product)
+    orderedItem: OrderedItemEntity[]
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;

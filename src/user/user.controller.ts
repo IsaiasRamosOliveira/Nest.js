@@ -1,12 +1,9 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { v4 as uuid } from 'uuid';
-import { NestResponseBuilder } from '../core/http/NestResponseBuilder';
-import { NestResponse } from '../core/http/nestResponse';
 import { createUserDTO } from './dtos/createUser.dto';
 import { updateUser } from './dtos/uptadeUser.dto';
-import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
+import { ListUserDTO } from './dtos/listUser.dto';
 
 
 @ApiTags("users")
@@ -17,21 +14,12 @@ export class UserController {
     ) { }
 
     @Post()
-    async postUser(@Body() dice: createUserDTO): Promise<NestResponse> {
-        const userEntity = new UserEntity();
-        userEntity.id = uuid();
-        userEntity.name = dice.name;
-        userEntity.email = dice.email;
-        userEntity.password = dice.password;
-        this.userService.save(userEntity);
-
-        return new NestResponseBuilder()
-            .status(HttpStatus.CREATED)
-            .headers({
-                'Location': `/users/${userEntity.name}`
-            })
-            .body(userEntity)
-            .build();
+    async postUser(@Body() data: createUserDTO) {
+        const user = await this.userService.save(data)
+        return {
+            data: new ListUserDTO(user.id, user.name),
+            message: "Usuário criado com sucesso."
+        }
     }
 
     @Get()

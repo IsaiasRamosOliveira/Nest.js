@@ -8,14 +8,9 @@ class ListImageProductDTO {
     description: string;
 }
 
-export class listProductDTO {
-    id: string;
-    userId: string;
-    name: string;
-    value: number;
-    amount: number;
-    description: string;
-    category: string;
-    characters: listProductPerCharacterDTO[];
-    images: ListImageProductDTO[];
+export class ListProductDTO {
+    constructor(
+        private id: string,
+        private name: string
+    ) { }
 }
